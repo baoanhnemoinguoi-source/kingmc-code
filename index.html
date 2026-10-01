@@ -1,133 +1,64 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KingMC - Nhận Mã Code</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f172a;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .card {
-            background-color: #1e293b;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            border: 1px solid #334155;
-        }
-        h2 {
-            color: #38bdf8;
-            margin-bottom: 8px;
-        }
-        p {
-            color: #94a3b8;
-            font-size: 14px;
-        }
-        .code-box {
-            background-color: #0f172a;
-            border: 2px dashed #38bdf8;
-            padding: 15px;
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #4ade80;
-            border-radius: 8px;
-            margin: 20px 0;
-            word-break: break-all;
-        }
-        .btn {
-            background-color: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn:hover {
-            background-color: #7dd3fc;
-        }
-    </style>
-</head>
-<body>
+<script>
+    // 1. Danh sách 15 mã code ngẫu nhiên
+    const codeList = {
+        "1": "KMC-892X7A",
+        "2": "KMC-314P9B",
+        "3": "KMC-750M2C",
+        "4": "KMC-189K6D",
+        "5": "KMC-623L4E",
+        "6": "KMC-941R8F",
+        "7": "KMC-507T3G",
+        "8": "KMC-238V1H",
+        "9": "KMC-865W5J",
+        "10": "KMC-412Z0K",
+        "11": "KMC-976Y4L",
+        "12": "KMC-351U8M",
+        "13": "KMC-684N2P",
+        "14": "KMC-129Q7R",
+        "15": "KMC-543X9T"
+    };
 
-    <div class="card">
-        <h2>KINGMC CODE REDEEM</h2>
-        <p>Cảm ơn bạn đã vượt link! Đây là mã phần thưởng của bạn:</p>
+    // 2. Hàm quét tìm số thứ tự thông minh từ mọi kiểu URL
+    function getCodeId() {
+        const fullUrl = window.location.href;
         
-        <div class="code-box" id="code-display">Đang tải mã...</div>
-        
-        <button class="btn" onclick="copyCode()">Sao chép mã</button>
-    </div>
+        // Tìm tham số ?v=1 hoặc ?id=1
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('v')) return urlParams.get('v').trim();
+        if (urlParams.get('id')) return urlParams.get('id').trim();
 
-    <script>
-        // Danh sách 15 mã code ngẫu nhiên chống đoán mò
-        const codeList = {
-            "1": "KMC-892X7A",
-            "2": "KMC-314P9B",
-            "3": "KMC-750M2C",
-            "4": "KMC-189K6D",
-            "5": "KMC-623L4E",
-            "6": "KMC-941R8F",
-            "7": "KMC-507T3G",
-            "8": "KMC-238V1H",
-            "9": "KMC-865W5J",
-            "10": "KMC-412Z0K",
-            "11": "KMC-976Y4L",
-            "12": "KMC-351U8M",
-            "13": "KMC-684N2P",
-            "14": "KMC-129Q7R",
-            "15": "KMC-543X9T"
-        };
-
-        // Hàm đọc ID từ mọi định dạng URL (#1, ?v=1, /1/)
-        function getCodeId() {
-            // Check dạng hashtag (#1, #2)
-            if (window.location.hash) {
-                return window.location.hash.replace('#', '').trim();
-            }
-            // Check dạng param (?v=1)
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('v')) {
-                return urlParams.get('v').trim();
-            }
-            // Check dạng folder (/1, /2)
-            const pathParts = window.location.pathname.split('/').filter(Boolean);
-            const lastPart = pathParts[pathParts.length - 1];
-            if (!isNaN(lastPart)) {
-                return lastPart;
-            }
-            return null;
+        // Tìm dạng hashtag #1
+        if (window.location.hash) {
+            const hashNum = window.location.hash.replace(/[^0-9]/g, '');
+            if (hashNum) return hashNum;
         }
 
-        const id = getCodeId();
-        const displayElement = document.getElementById('code-display');
-
-        if (id && codeList[id]) {
-            displayElement.innerText = codeList[id];
-        } else {
-            displayElement.style.color = '#f87171';
-            displayElement.innerText = "MÃ KHÔNG HỢP LỆ!";
+        // Tự động quét tìm con số bất kỳ ở cuối URL
+        const matches = fullUrl.match(/[\/#?&]v?=?(\d+)\/?$/);
+        if (matches && matches[1]) {
+            return matches[1];
         }
 
-        function copyCode() {
-            const text = displayElement.innerText;
-            if (text && !text.includes("KHÔNG HỢP LỆ")) {
-                navigator.clipboard.writeText(text);
-                alert("Đã sao chép mã: " + text);
-            }
+        return null;
+    }
+
+    // 3. Hiển thị mã
+    const id = getCodeId();
+    const displayElement = document.getElementById('code-display');
+
+    if (id && codeList[id]) {
+        displayElement.innerText = codeList[id];
+        displayElement.style.color = '#4ade80'; // Màu xanh lá khi thành công
+    } else {
+        displayElement.innerText = "MÃ KHÔNG HỢP LỆ!";
+        displayElement.style.color = '#f87171'; // Màu đỏ khi lỗi
+    }
+
+    function copyCode() {
+        const text = displayElement.innerText;
+        if (text && !text.includes("KHÔNG HỢP LỆ")) {
+            navigator.clipboard.writeText(text);
+            alert("Đã sao chép mã: " + text);
         }
-    </script>
-</body>
-</html>
+    }
+</script>
